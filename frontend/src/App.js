@@ -9,7 +9,7 @@ function App() {
 	const [newProducts, setNewProducts] = useState([]);
 
 	useEffect(() => {
-		let eventSource = new EventSource("/api/new");
+		let eventSource = new EventSource("https://ecom-playground-api.herokuapp.com//api/new");
 		eventSource.addEventListener("message", (event) => {
 			const data = JSON.parse(event.data.slice(6));
 			setNewProducts((prev) => [...prev, data.fullDocument]);
@@ -18,7 +18,7 @@ function App() {
 		const fetchProducts = async () => {
 			try {
 				const res = await axios.get(
-					"/api/products"
+					"https://ecom-playground-api.herokuapp.com//api/products"
 				);
 				setProducts(res.data);
 			} catch (error) {
@@ -31,7 +31,7 @@ function App() {
 
 	const addProduct = async () => {
 		try {
-			const res = await axios.post("/api/products", {
+			const res = await axios.post("https://ecom-playground-api.herokuapp.com//api/products", {
 				title,
 				description,
 				price,
