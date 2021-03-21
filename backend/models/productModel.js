@@ -19,4 +19,8 @@ const productSchema = new mongoose.Schema({
 
 const Product = new mongoose.model("Product",productSchema);
 
+// const productEventEmitter = Product.watch();
+
+// productEventEmitter.on('change', change => console.log(JSON.stringify(change)))
+
 module.exports = Product;

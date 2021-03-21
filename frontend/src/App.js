@@ -6,8 +6,15 @@ function App() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [price, setPrice] = useState("");
+	const [newProducts, setNewProducts] = useState([]);
 
 	useEffect(() => {
+		let eventSource = new EventSource("http://localhost:5000/api/new");
+		eventSource.addEventListener("message", (event) => {
+			const data = JSON.parse(event.data.slice(6));
+			setNewProducts((prev) => [...prev, data.fullDocument]);
+			console.log(data);
+		});
 		const fetchProducts = async () => {
 			try {
 				const res = await axios.get(
@@ -29,7 +36,6 @@ function App() {
 				description,
 				price,
 			});
-			console.log(res);
 			setProducts((prev) => [...prev, res.data.product]);
 			setTitle("");
 			setDescription("");
@@ -42,16 +48,40 @@ function App() {
 	return (
 		<div className="App">
 			<h1>Menu</h1>
-			<input type="text" placeholder="Title" value={title} onChange={(event) => setTitle(event.target.value)}/>
+			<input
+				type="text"
+				placeholder="Title"
+				value={title}
+				onChange={(event) => setTitle(event.target.value)}
+			/>
 			<br />
-			<textarea placeholder="Description" value={description} onChange={(event) => setDescription(event.target.value)} />
+			<textarea
+				placeholder="Description"
+				value={description}
+				onChange={(event) => setDescription(event.target.value)}
+			/>
 			<br />
-			<input type="text" placeholder="Price" value={price} onChange={(event) => setPrice(event.target.value)} />
+			<input
+				type="text"
+				placeholder="Price"
+				value={price}
+				onChange={(event) => setPrice(event.target.value)}
+			/>
 			<br />
 			<button onClick={addProduct}>Add</button>
 			<ul>
 				{products.map((product, idx) => (
-					<li key={idx}>{product.title}, {product.description}, {product.price}</li>
+					<li key={idx}>
+						{product.title}, {product.description}, {product.price}
+					</li>
+				))}
+			</ul>
+			<h1>New products</h1>
+			<ul>
+				{newProducts.map((product, idx) => (
+					<li key={idx}>
+						{product.title}, {product.description}, {product.price}
+					</li>
 				))}
 			</ul>
 		</div>
