@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require("./db/connect");
 const productsRouter = require("./routers/productsRouter");
 
 const app = express();
