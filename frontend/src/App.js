@@ -9,7 +9,7 @@ function App() {
 	const [newProducts, setNewProducts] = useState([]);
 
 	useEffect(() => {
-		let eventSource = new EventSource("http://localhost:5000/api/new");
+		let eventSource = new EventSource("/api/new");
 		eventSource.addEventListener("message", (event) => {
 			const data = JSON.parse(event.data.slice(6));
 			setNewProducts((prev) => [...prev, data.fullDocument]);
@@ -18,7 +18,7 @@ function App() {
 		const fetchProducts = async () => {
 			try {
 				const res = await axios.get(
-					"http://localhost:5000/api/products"
+					"/api/products"
 				);
 				setProducts(res.data);
 			} catch (error) {
@@ -31,7 +31,7 @@ function App() {
 
 	const addProduct = async () => {
 		try {
-			const res = await axios.post("http://localhost:5000/api/products", {
+			const res = await axios.post("/api/products", {
 				title,
 				description,
 				price,
