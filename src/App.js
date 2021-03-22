@@ -11,9 +11,9 @@ function App() {
 	useEffect(() => {
 		let eventSource = new EventSource("https://ecom-playground-api.herokuapp.com/api/new");
 		eventSource.addEventListener("message", (event) => {
+			console.log(data);
 			const data = JSON.parse(event.data.slice(6));
 			setNewProducts((prev) => [...prev, data.fullDocument]);
-			console.log(data);
 		});
 		const fetchProducts = async () => {
 			try {
