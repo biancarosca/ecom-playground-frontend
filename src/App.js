@@ -16,8 +16,8 @@ function App() {
 		const audio = new Audio(notificationSound);
 		eventSource.addEventListener("message", (event) => {
 			const findBraceIdx = event.data.indexOf("{");
-			if (event.data) {
-				const data = JSON.parse(event.data.slice(findBraceIdx));
+			const data = JSON.parse(event.data.slice(findBraceIdx));
+			if (data.operationType === "insert") {
 				setNewProducts((prev) => [...prev, data.fullDocument]);
 				audio.play();
 			}
@@ -34,6 +34,11 @@ function App() {
 		};
 
 		fetchProducts();
+
+		return () => {
+			eventSource.close(); //close connection
+		};
+
 	}, []);
 
 	const addProduct = async () => {
@@ -82,7 +87,9 @@ function App() {
 			<ul>
 				{products.map((product, idx) => (
 					<li key={idx}>
-						{product.title}, {product.description}, {product.price}
+						{product && product.title},
+						{product && product.description},
+						{product && product.price}
 					</li>
 				))}
 			</ul>
@@ -90,7 +97,9 @@ function App() {
 			<ul>
 				{newProducts.map((product, idx) => (
 					<li key={idx}>
-						{product.title}, {product.description}, {product.price}
+						{product && product.title},
+						{product && product.description},
+						{product && product.price}
 					</li>
 				))}
 			</ul>
