@@ -10,12 +10,16 @@ function App() {
 	const [newProducts, setNewProducts] = useState([]);
 
 	useEffect(() => {
-		let eventSource = new EventSource("https://ecom-playground-api.herokuapp.com/api/new");
+		let eventSource = new EventSource(
+			"https://ecom-playground-api.herokuapp.com/api/new"
+		);
 		const audio = new Audio(notificationSound);
 		eventSource.addEventListener("message", (event) => {
-			const data = JSON.parse(event.data);
-			setNewProducts((prev) => [...prev, data.fullDocument]);
-			audio.play();
+			if (event.data) {
+				const data = JSON.parse(event.data);
+				setNewProducts((prev) => [...prev, data.fullDocument]);
+				audio.play();
+			}
 		});
 		const fetchProducts = async () => {
 			try {
@@ -33,11 +37,14 @@ function App() {
 
 	const addProduct = async () => {
 		try {
-			const res = await axios.post("https://ecom-playground-api.herokuapp.com/api/products", {
-				title,
-				description,
-				price,
-			});
+			const res = await axios.post(
+				"https://ecom-playground-api.herokuapp.com/api/products",
+				{
+					title,
+					description,
+					price,
+				}
+			);
 			setProducts((prev) => [...prev, res.data.product]);
 			setTitle("");
 			setDescription("");
