@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import notificationSound from "./assets/notification.mp3";
 
 function App() {
 	const [products, setProducts] = useState([]);
@@ -10,10 +11,11 @@ function App() {
 
 	useEffect(() => {
 		let eventSource = new EventSource("https://ecom-playground-api.herokuapp.com/api/new");
+		const audio = new Audio(notificationSound);
 		eventSource.addEventListener("message", (event) => {
-			console.log(event.data,event.data.slice(6));
 			const data = JSON.parse(event.data);
 			setNewProducts((prev) => [...prev, data.fullDocument]);
+			audio.play();
 		});
 		const fetchProducts = async () => {
 			try {
