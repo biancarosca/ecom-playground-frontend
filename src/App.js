@@ -15,8 +15,9 @@ function App() {
 		);
 		const audio = new Audio(notificationSound);
 		eventSource.addEventListener("message", (event) => {
+			const findBraceIdx = event.data.indexOf("{");
 			if (event.data) {
-				const data = JSON.parse(event.data);
+				const data = JSON.parse(event.data.slice(findBraceIdx));
 				setNewProducts((prev) => [...prev, data.fullDocument]);
 				audio.play();
 			}
