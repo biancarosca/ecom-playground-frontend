@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import notificationSound from "./assets/notification.mp3";
+import { io } from "socket.io-client";
 
 function App() {
 	const [products, setProducts] = useState([]);
@@ -10,17 +11,15 @@ function App() {
 	const [newProducts, setNewProducts] = useState([]);
 
 	useEffect(() => {
-		let eventSource = new EventSource(
-			"https://ecom-playground-api.herokuapp.com/api/new"
-		);
 		const audio = new Audio(notificationSound);
-		eventSource.addEventListener("message", (event) => {
-			const findBraceIdx = event.data.indexOf("{");
-			const data = JSON.parse(event.data.slice(findBraceIdx));
-			if (data.operationType === "insert") {
-				setNewProducts((prev) => [...prev, data.fullDocument]);
-				audio.play();
-			}
+		const socket = io("https://ecom-playground-api.herokuapp.com");
+		socket.on("connect", () => {
+			console.log("connection established");
+		});
+		socket.on("message", (data) => {
+			console.log(data);
+			setNewProducts((prev) => [...prev, data.fullDocument]);
+			audio.play();
 		});
 		const fetchProducts = async () => {
 			try {
@@ -34,23 +33,15 @@ function App() {
 		};
 
 		fetchProducts();
-
-		return () => {
-			eventSource.close(); //close connection
-		};
-
 	}, []);
 
 	const addProduct = async () => {
 		try {
-			const res = await axios.post(
-				"https://ecom-playground-api.herokuapp.com/api/products",
-				{
-					title,
-					description,
-					price,
-				}
-			);
+			const res = await axios.post("https://ecom-playground-api.herokuapp.com/api/products", {
+				title,
+				description,
+				price,
+			});
 			setProducts((prev) => [...prev, res.data.product]);
 			setTitle("");
 			setDescription("");
@@ -87,8 +78,7 @@ function App() {
 			<ul>
 				{products.map((product, idx) => (
 					<li key={idx}>
-						{product && product.title},
-						{product && product.description},
+						{product && product.title},{product && product.description},
 						{product && product.price}
 					</li>
 				))}
@@ -97,8 +87,7 @@ function App() {
 			<ul>
 				{newProducts.map((product, idx) => (
 					<li key={idx}>
-						{product && product.title},
-						{product && product.description},
+						{product && product.title},{product && product.description},
 						{product && product.price}
 					</li>
 				))}
